@@ -1,173 +1,72 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useEffect } from "react"
+import { useRouter, usePathname } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
+import { Navbar } from "@/components/navbar"
+import { Loader2 } from "lucide-react"
 
-export default function ProfilePage() {
+interface LayoutProps {
+  children: React.ReactNode
+}
 
+export default function StudentLayout({ children }: LayoutProps) {
+
+  const { user, userData, loading } = useAuth()
   const router = useRouter()
-  const { user } = useAuth()
+  const pathname = usePathname()
 
-  const [name,setName] = useState("")
-  const [mobile,setMobile] = useState("")
-  const [examType,setExamType] = useState("")
-  const [standard,setStandard] = useState("")
-  const [parentName,setParentName] = useState("")
-  const [loading,setLoading] = useState(false)
+  useEffect(() => {
 
-  const handleSubmit = async (e:any)=>{
-    e.preventDefault()
+    if (loading) return
 
-    if(!name || !mobile || !examType){
-      alert("Please fill required fields")
+    // Not logged in
+    if (!user) {
+      router.replace("/login")
       return
     }
 
-    setLoading(true)
-
-    try{
-
-      const res = await fetch("/api/student/profile",{
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-          uid:user?.uid,
-          name,
-          mobile,
-          examType,
-          standard,
-          parentName,
-          profileCompleted:true
-        })
-      })
-
-      if(res.ok){
-        router.push("/student/tests")
-      }
-
-    }catch(err){
-      console.error(err)
-      alert("Error saving profile")
+    // Not student
+    if (userData?.role !== "student") {
+      router.replace("/admin")
+      return
     }
 
-    setLoading(false)
+    // Profile not completed
+    if (!userData?.profileCompleted && pathname !== "/student/profile") {
+      router.replace("/student/profile")
+      return
+    }
 
+    // Profile already completed but trying to open profile page again
+    if (userData?.profileCompleted && pathname === "/student/profile") {
+      router.replace("/student/tests")
+      return
+    }
+
+  }, [user, userData, loading, router, pathname])
+
+
+  if (loading || !userData) {
+    return (
+      <div style={{
+        display:"flex",
+        justifyContent:"center",
+        alignItems:"center",
+        height:"100vh"
+      }}>
+        <Loader2 className="animate-spin" />
+      </div>
+    )
   }
 
   return (
+    <div>
 
-    <div style={{
-      maxWidth:"400px",
-      margin:"50px auto",
-      padding:"30px",
-      border:"1px solid #ddd",
-      borderRadius:"10px"
-    }}>
+      {pathname !== "/student/profile" && <Navbar />}
 
-      <h2 style={{marginBottom:"20px"}}>
-        Complete Your Profile
-      </h2>
-
-      <form onSubmit={handleSubmit}>
-
-        {/* Student Name */}
-
-        <input
-          type="text"
-          placeholder="Student Name"
-          value={name}
-          onChange={(e)=>setName(e.target.value)}
-          style={inputStyle}
-        />
-
-        {/* Mobile */}
-
-        <input
-          type="tel"
-          placeholder="Mobile Number"
-          value={mobile}
-          onChange={(e)=>setMobile(e.target.value)}
-          style={inputStyle}
-        />
-
-        {/* Exam Type */}
-
-        <select
-          value={examType}
-          onChange={(e)=>setExamType(e.target.value)}
-          style={inputStyle}
-        >
-          <option value="">Select Student Type</option>
-          <option value="neet">NEET</option>
-          <option value="jee">JEE</option>
-          <option value="school">School Student</option>
-        </select>
-
-        {/* Standard (only school) */}
-
-        {examType === "school" && (
-
-          <select
-            value={standard}
-            onChange={(e)=>setStandard(e.target.value)}
-            style={inputStyle}
-          >
-            <option value="">Select Standard</option>
-            <option>6</option>
-            <option>7</option>
-            <option>8</option>
-            <option>9</option>
-            <option>10</option>
-            <option>11</option>
-            <option>12</option>
-          </select>
-
-        )}
-
-        {/* Parent Name */}
-
-        <input
-          type="text"
-          placeholder="Parent Name"
-          value={parentName}
-          onChange={(e)=>setParentName(e.target.value)}
-          style={inputStyle}
-        />
-
-        <button
-          type="submit"
-          style={buttonStyle}
-          disabled={loading}
-        >
-          {loading ? "Saving..." : "Save Profile"}
-        </button>
-
-      </form>
+      {children}
 
     </div>
-
   )
-
-}
-
-const inputStyle = {
-  width:"100%",
-  padding:"10px",
-  marginBottom:"15px",
-  borderRadius:"6px",
-  border:"1px solid #ccc"
-}
-
-const buttonStyle = {
-  width:"100%",
-  padding:"12px",
-  borderRadius:"6px",
-  border:"none",
-  background:"#2563eb",
-  color:"white",
-  fontWeight:"bold",
-  cursor:"pointer"
 }
