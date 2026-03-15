@@ -2,13 +2,13 @@
   "name": "my-project",
   "version": "0.1.0",
   "private": true,
-"scripts": {
-  "dev": "next dev",
-  "build": "next build",
-  "start": "next start",
-  "lint": "eslint .",
-  "tailwind:build": "tailwindcss-cli -i ./styles/globals.css -o ./styles/output.css --watch"
-},
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "tailwind:build": "tailwindcss-cli -i ./styles/globals.css -o ./styles/output.css --watch"
+  },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "1.2.12",
@@ -38,6 +38,7 @@
     "@radix-ui/react-toggle": "1.1.10",
     "@radix-ui/react-toggle-group": "1.1.11",
     "@radix-ui/react-tooltip": "1.2.8",
+    "@tailwindcss/postcss": "^4.2.1",
     "@vercel/analytics": "1.6.1",
     "browser-image-compression": "^2.0.2",
     "class-variance-authority": "^0.7.1",
@@ -77,4 +78,3 @@
     "typescript": "5.7.3"
   }
 }
-

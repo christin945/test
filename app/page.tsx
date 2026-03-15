@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { Loader2 } from "lucide-react"
 
+
 export default function Home() {
   const { user, userData, loading } = useAuth()
   const router = useRouter()

@@ -20,25 +20,25 @@ export default function StudentLayout({ children }: LayoutProps) {
 
     if (loading) return
 
-    // Not logged in
+    // If user not logged in
     if (!user) {
       router.replace("/login")
       return
     }
 
-    // Not student
+    // If user is not a student
     if (userData?.role !== "student") {
       router.replace("/admin")
       return
     }
 
-    // Profile not completed
+    // If profile not completed
     if (!userData?.profileCompleted && pathname !== "/student/profile") {
       router.replace("/student/profile")
       return
     }
 
-    // Profile already completed but trying to open profile page again
+    // If profile already completed but user opens profile again
     if (userData?.profileCompleted && pathname === "/student/profile") {
       router.replace("/student/tests")
       return
@@ -47,25 +47,36 @@ export default function StudentLayout({ children }: LayoutProps) {
   }, [user, userData, loading, router, pathname])
 
 
+
+  /* LOADING SCREEN */
+
   if (loading || !userData) {
     return (
-      <div style={{
-        display:"flex",
-        justifyContent:"center",
-        alignItems:"center",
-        height:"100vh"
-      }}>
-        <Loader2 className="animate-spin" />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh"
+        }}
+      >
+        <Loader2 className="animate-spin h-10 w-10 text-blue-500" />
       </div>
     )
   }
 
-  return (
-    <div>
 
+  /* MAIN LAYOUT */
+
+  return (
+    <div className="min-h-screen flex flex-col">
+
+      {/* Hide navbar on profile page */}
       {pathname !== "/student/profile" && <Navbar />}
 
-      {children}
+      <main className="flex-1">
+        {children}
+      </main>
 
     </div>
   )

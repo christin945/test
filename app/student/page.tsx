@@ -12,8 +12,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
-import "./student-dashboard.css"
-
 import {
   FileText,
   CheckCircle,
@@ -43,61 +41,59 @@ export default function StudentDashboard() {
   const router = useRouter()
   const { userData } = useAuth()
 
-  const [tests,setTests] = useState<TestItem[]>([])
-  const [submissions,setSubmissions] = useState<SubmissionItem[]>([])
-  const [loading,setLoading] = useState(true)
+  const [tests, setTests] = useState<TestItem[]>([])
+  const [submissions, setSubmissions] = useState<SubmissionItem[]>([])
+  const [loading, setLoading] = useState(true)
 
-  useEffect(()=>{
+  useEffect(() => {
 
-    if(userData && userData.role === "teacher"){
+    if (userData && userData.role === "teacher") {
       router.push("/admin")
       return
     }
 
-    async function fetchData(){
+    async function fetchData() {
 
-      try{
+      try {
 
-        const testsSnap = await getDocs(collection(db,"tests"))
+        const testsSnap = await getDocs(collection(db, "tests"))
 
-        const testsList = testsSnap.docs.map((doc)=>({
-          id:doc.id,
-          ...(doc.data() as Omit<TestItem,"id">)
+        const testsList = testsSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...(doc.data() as Omit<TestItem, "id">)
         }))
 
         setTests(testsList)
 
         const subsSnap = await getDocs(
           query(
-            collection(db,"submissions"),
-            where("studentId","==",userData?.uid)
+            collection(db, "submissions"),
+            where("studentId", "==", userData?.uid)
           )
         )
 
-        const subsList = subsSnap.docs.map((doc)=>doc.data()) as SubmissionItem[]
+        const subsList = subsSnap.docs.map((doc) => doc.data()) as SubmissionItem[]
 
         setSubmissions(subsList)
 
-      }
-      catch(err){
-        console.error("Error loading dashboard:",err)
-      }
-      finally{
+      } catch (err) {
+        console.error("Error loading dashboard:", err)
+      } finally {
         setLoading(false)
       }
 
     }
 
-    if(userData?.uid){
+    if (userData?.uid) {
       fetchData()
     }
 
-  },[userData,router])
+  }, [userData, router])
 
-  if(loading){
-    return(
-      <div className="loading-container">
-        <Loader2 className="loader-icon"/>
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -105,109 +101,119 @@ export default function StudentDashboard() {
   const now = Date.now() / 1000
 
   const completedTestIds = new Set(
-    submissions.map((s)=>s.testId)
+    submissions.map((s) => s.testId)
   )
 
   const availableTests = tests.filter(
-    (t)=>
+    (t) =>
       now >= t.startTime?.seconds &&
       now <= t.endTime?.seconds &&
       !completedTestIds.has(t.id)
   )
 
   const completedTests = tests.filter(
-    (t)=>completedTestIds.has(t.id)
+    (t) => completedTestIds.has(t.id)
   )
 
-  return(
+  return (
 
-    <div className="dashboard-container">
+    <div className="flex flex-col gap-8">
 
       {/* HEADER */}
 
-      <div className="dashboard-header">
+      <div>
 
-        <h1 className="dashboard-title">
+        <h1 className="text-3xl font-bold tracking-tight">
           Welcome, {userData?.name}
         </h1>
 
-        <p className="dashboard-subtitle">
+        <p className="text-muted-foreground">
           Here is your test overview.
         </p>
 
       </div>
 
+
       {/* STATS */}
 
-      <div className="stats-grid">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
-        <Card className="stat-card">
+        <Card>
 
           <CardHeader className="flex flex-row items-center justify-between pb-2">
 
-            <CardTitle className="text-sm text-gray-500">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Available Tests
             </CardTitle>
 
-            <Clock className="icon-primary"/>
+            <Clock className="h-5 w-5 text-primary" />
 
           </CardHeader>
 
           <CardContent>
-            <div className="stat-number">
+
+            <div className="text-3xl font-bold">
               {availableTests.length}
             </div>
+
           </CardContent>
 
         </Card>
 
-        <Card className="stat-card">
+
+        <Card>
 
           <CardHeader className="flex flex-row items-center justify-between pb-2">
 
-            <CardTitle className="text-sm text-gray-500">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Completed
             </CardTitle>
 
-            <CheckCircle className="icon-accent"/>
+            <CheckCircle className="h-5 w-5 text-green-500" />
 
           </CardHeader>
 
           <CardContent>
-            <div className="stat-number">
+
+            <div className="text-3xl font-bold">
               {completedTests.length}
             </div>
+
           </CardContent>
 
         </Card>
 
-        <Card className="stat-card">
+
+        <Card>
 
           <CardHeader className="flex flex-row items-center justify-between pb-2">
 
-            <CardTitle className="text-sm text-gray-500">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Total Tests
             </CardTitle>
 
-            <FileText className="icon-chart"/>
-            
+            <FileText className="h-5 w-5 text-blue-500" />
+
           </CardHeader>
 
           <CardContent>
-            <div className="stat-number">
+
+            <div className="text-3xl font-bold">
               {tests.length}
             </div>
+
           </CardContent>
 
         </Card>
 
       </div>
 
+
       {/* AVAILABLE TESTS */}
 
       {availableTests.length > 0 && (
 
-        <Card className="section-card">
+        <Card>
 
           <CardHeader>
             <CardTitle>Available Tests</CardTitle>
@@ -215,23 +221,28 @@ export default function StudentDashboard() {
 
           <CardContent className="flex flex-col gap-3">
 
-            {availableTests.map((test)=>(
+            {availableTests.map((test) => (
 
-              <Link key={test.id} href={`/student/test/${test.id}`}>
+              <Link key={test.id} href={"/student/test/" + test.id}>
 
-                <div className="test-item">
+                <div className="flex items-center justify-between rounded-lg border px-4 py-3 hover:bg-secondary">
 
                   <div>
-                    <p className="font-medium">{test.title}</p>
-                    <p className="text-sm text-gray-500">
+
+                    <p className="font-medium">
+                      {test.title}
+                    </p>
+
+                    <p className="text-sm text-muted-foreground">
                       {test.subject} · {test.duration} min · {test.totalMarks} marks
                     </p>
+
                   </div>
 
-                  <Button className="take-test-btn">
+                  <Button>
 
                     Take Test
-                    <ArrowRight className="ml-1 h-4 w-4"/>
+                    <ArrowRight className="ml-1 h-4 w-4" />
 
                   </Button>
 
@@ -247,11 +258,12 @@ export default function StudentDashboard() {
 
       )}
 
+
       {/* COMPLETED TESTS */}
 
       {completedTests.length > 0 && (
 
-        <Card className="section-card">
+        <Card>
 
           <CardHeader className="flex items-center justify-between">
 
@@ -269,26 +281,36 @@ export default function StudentDashboard() {
 
           <CardContent className="flex flex-col gap-3">
 
-            {completedTests.slice(0,5).map((test)=>{
+            {completedTests.slice(0, 5).map((test) => {
 
               const sub = submissions.find(
-                (s)=>s.testId === test.id
+                (s) => s.testId === test.id
               )
 
               const score =
                 (sub?.mcqScore || 0) +
                 (sub?.teacherMarks || 0)
 
-              return(
+              return (
 
-                <div key={test.id} className="completed-test">
+                <div
+                  key={test.id}
+                  className="flex items-center justify-between rounded-lg border px-4 py-3"
+                >
 
                   <div>
-                    <p className="font-medium">{test.title}</p>
-                    <p className="text-sm text-gray-500">{test.subject}</p>
+
+                    <p className="font-medium">
+                      {test.title}
+                    </p>
+
+                    <p className="text-sm text-muted-foreground">
+                      {test.subject}
+                    </p>
+
                   </div>
 
-                  <Badge className="score-badge">
+                  <Badge>
                     {score}/{test.totalMarks}
                   </Badge>
 

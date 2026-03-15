@@ -3,8 +3,30 @@ __v0_runtime_loader.js
 __v0_devtools.tsx
 __v0_jsx-dev-runtime.ts
 
-# Common ignores
+# dependencies
 node_modules/
+
+# Next.js build output
 .next/
+out/
+
+# environment files
+.env
+.env.local
 .env*.local
+
+# logs
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# Tailwind build file (generated)
+styles/output.css
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts

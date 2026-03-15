@@ -1,14 +1,12 @@
 /* globals.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 
 /* Custom Dark Mode Variant */
 @custom-variant dark (&:is(.dark *));
 
-/* CSS Variables for Colors, Radius, Sidebar, etc. */
+/* CSS Variables */
 :root {
   --background: oklch(0.97 0.02 240);
   --foreground: oklch(0.25 0.03 240);
@@ -41,36 +39,45 @@
   --radius: 0.7rem;
 }
 
-/* Dark Mode Overrides */
+/* Dark Mode */
 .dark {
   --background: oklch(0.18 0.02 240);
   --foreground: oklch(0.96 0.01 240);
+
   --card: oklch(0.22 0.02 240);
   --card-foreground: oklch(0.96 0.01 240);
+
   --border: oklch(0.3 0.02 240);
   --ring: oklch(0.7 0.15 240);
 }
 
 /* Base Styles */
 @layer base {
-  /* Apply CSS variables using Tailwind utilities */
+
   body {
     background-color: var(--background);
     color: var(--foreground);
+    font-family: system-ui, sans-serif;
   }
 
-  /* Optional: universal border & outline */
   * {
-    border: 1px solid var(--border);
-    outline: 2px solid var(--ring);
-    outline-offset: 2px;
+    border-color: var(--border);
+    outline-color: var(--ring);
   }
+
 }
 
 /* Animations */
+
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-30px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .animate-slideDown {
@@ -78,8 +85,14 @@
 }
 
 @keyframes popup {
-  0% { opacity: 0; transform: scale(.9) translateY(-20px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+  0% {
+    opacity: 0;
+    transform: scale(.9) translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .animate-popup {
@@ -87,10 +100,153 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .animate-fadeIn {
   animation: fadeIn 0.2s ease;
+}
+/* DASHBOARD STYLES */
+
+.dashboard-container{
+  max-width:1100px;
+  margin:auto;
+  padding:32px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:24px;
+}
+
+.dashboard-header{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.dashboard-title{
+  font-size:28px;
+  font-weight:700;
+}
+
+.dashboard-subtitle{
+  font-size:14px;
+  color:#6b7280;
+}
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+}
+
+@media (min-width:768px){
+  .stats-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+
+.stat-card{
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+  background:var(--card);
+}
+
+.stat-number{
+  font-size:28px;
+  font-weight:700;
+}
+
+.icon-primary{
+  width:20px;
+  height:20px;
+  color:#3b82f6;
+}
+
+.icon-accent{
+  width:20px;
+  height:20px;
+  color:#22c55e;
+}
+
+.icon-chart{
+  width:20px;
+  height:20px;
+  color:#8b5cf6;
+}
+
+.section-card{
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+  background:var(--card);
+}
+
+.test-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  transition:0.2s;
+}
+
+.test-item:hover{
+  background:#f5f5f5;
+}
+
+.take-test-btn{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  background:#2563eb;
+  color:white;
+  padding:8px 12px;
+  border-radius:8px;
+}
+
+.take-test-btn:hover{
+  background:#1d4ed8;
+}
+
+.completed-test{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:10px;
+}
+
+.score-badge{
+  background:#22c55e;
+  color:white;
+  font-weight:600;
+  padding:4px 10px;
+  border-radius:6px;
+}
+
+.loading-container{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.loader-icon{
+  width:40px;
+  height:40px;
+  color:#3b82f6;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  from{transform:rotate(0)}
+  to{transform:rotate(360deg)}
 }
